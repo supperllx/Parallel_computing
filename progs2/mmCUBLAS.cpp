@@ -100,6 +100,8 @@ matrixMulCPU(float *C, const float *A, const float *B, unsigned int hA, unsigned
         }
 }
 
+extern cudaError_t cu_multi(float* c_m, float* a_m, float* b_m, int ha,int n, int wb);
+
 // Allocates a matrix with random float entries.
 void randomInit(float *data, int size)
 {
