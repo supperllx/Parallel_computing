@@ -90,6 +90,7 @@ LIBRARIES += -lcublas
 all: build
 
 build: mmCUBLAS
+build: mmNaive
 
 check.deps:
 ifeq ($(SAMPLE_ENABLED),0)
@@ -107,10 +108,18 @@ mmCUBLAS.o:mmCUBLAS.cpp
 mmCUBLAS: mmCUBLAS.o
 	$(EXEC) $(NVCC) $(ALL_LDFLAGS) $(GENCODE_FLAGS) -o $@ $+ $(LIBRARIES)
 
+mmNaive.o:mmNaive.cpp
+	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
+
+mmNaive: mmNaive.o
+	$(EXEC) $(NVCC) $(ALL_LDFLAGS) $(GENCODE_FLAGS) -o $@ $+ $(LIBRARIES)
+
 run: build
 	$(EXEC) ./mmCUBLAS
+	$(EXEC) ./mmNaive
 
 clean:
 	rm -f mmCUBLAS mmCUBLAS.o
+	rm -f mmNaive mmNaive.o
 
 clobber: clean
