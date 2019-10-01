@@ -60,7 +60,7 @@
 #include <helper_functions.h>
 #include <helper_cuda.h>
 
-#define TILE_WIDTH 16
+#define TILE_WIDTH 32
 
 #ifndef min
 #define min(a,b) ((a < b) ? a : b)
