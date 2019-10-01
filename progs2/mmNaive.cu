@@ -267,7 +267,7 @@ int matrixMultiply(int argc, char **argv, int devID, sMatrixSize &matrix_size)
     dim3 grid(matrix_size.uiWC / threads.x, matrix_size.uiHC / threads.y);
 
     // create and start timer
-    printf("Computing result using CUBLAS...");
+    printf("Computing result using mmNaive...");
 
     // execute the kernel
     int nIter = 30;
