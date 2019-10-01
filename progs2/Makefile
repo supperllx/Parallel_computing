@@ -108,7 +108,7 @@ mmCUBLAS.o:mmCUBLAS.cpp
 mmCUBLAS: mmCUBLAS.o
 	$(EXEC) $(NVCC) $(ALL_LDFLAGS) $(GENCODE_FLAGS) -o $@ $+ $(LIBRARIES)
 
-mmNaive.o:mmNaive.cpp
+mmNaive.o:mmNaive.cu
 	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
 
 mmNaive: mmNaive.o
