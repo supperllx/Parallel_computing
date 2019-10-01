@@ -100,7 +100,8 @@ matrixMulCPU(float *C, const float *A, const float *B, unsigned int hA, unsigned
         }
 }
 
-extern cudaError_t cu_multi(float* c_m, float* a_m, float* b_m, int ha,int n, int wb);
+//extern cudaError_t cu_multi(float* c_m, float* a_m, float* b_m, int ha,int n, int wb);
+extern __global__ void kernel_multi(float* c_m, float* a_m, float* b_m, int ha, int n, int wb);
 
 // Allocates a matrix with random float entries.
 void randomInit(float *data, int size)
@@ -292,7 +293,8 @@ int matrixMultiply(int argc, char **argv, int devID, sMatrixSize &matrix_size)
         {
             //note cublas is column primary!
             //need to transpose the order
-            checkCudaErrors(cublasSgemm(handle, CUBLAS_OP_N, CUBLAS_OP_N, matrix_size.uiWB, matrix_size.uiHA, matrix_size.uiWA, &alpha, d_B, matrix_size.uiWB, d_A, matrix_size.uiWA, &beta, d_C, matrix_size.uiWB));
+            //checkCudaErrors(cublasSgemm(handle, CUBLAS_OP_N, CUBLAS_OP_N, matrix_size.uiWB, matrix_size.uiHA, matrix_size.uiWA, &alpha, d_B, matrix_size.uiWB, d_A, matrix_size.uiWA, &beta, d_C, matrix_size.uiWB));
+            checkCudaErrors(kernel_multi(d_C, d_A, d_B, matrix_size.uiHA, matrix_size.uiWA, matrix_size.uiWB));
 
         }
 
