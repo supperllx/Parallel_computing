@@ -60,7 +60,7 @@
 #include <helper_functions.h>
 #include <helper_cuda.h>
 
-#define TILE_WIDTH 32
+#define BLOCK_SIZE 32
 
 #ifndef min
 #define min(a,b) ((a < b) ? a : b)
@@ -263,8 +263,11 @@ int matrixMultiply(int argc, char **argv, int devID, sMatrixSize &matrix_size)
     checkCudaErrors(cudaMalloc((void **) &d_C, mem_size_C));
 
     // setup execution parameters
-    dim3 threads(block_size, block_size);
-    dim3 grid(matrix_size.uiWC / threads.x, matrix_size.uiHC / threads.y);
+    //dim3 threads(block_size, block_size);
+    //dim3 grid(matrix_size.uiWC / threads.x, matrix_size.uiHC / threads.y);
+
+    dim3 threads(BLOCK_SIZE, BLOCK_SIZE);
+	dim3 grid(matrix_size.uiWB / BLOCK_SIZE, matrix_size.uiHA / BLOCK_SIZE);
 
     // create and start timer
     printf("Computing result using mmOpt...");
@@ -296,7 +299,7 @@ int matrixMultiply(int argc, char **argv, int devID, sMatrixSize &matrix_size)
             //note cublas is column primary!
             //need to transpose the order
             //checkCudaErrors(cublasSgemm(handle, CUBLAS_OP_N, CUBLAS_OP_N, matrix_size.uiWB, matrix_size.uiHA, matrix_size.uiWA, &alpha, d_B, matrix_size.uiWB, d_A, matrix_size.uiWA, &beta, d_C, matrix_size.uiWB));
-			MatrixMulKernle_opt<<<grid,threads>>>(d_C, d_A, d_B, matrix_size.uiHA, matrix_size.uiWA, matrix_size.uiWB);
+			matrix_mul_kernel<<<grid,threads>>>(d_C, d_A, d_B, matrix_size.uiHA, matrix_size.uiWA, matrix_size.uiWB);
 			//cudaDeviceSynchronize();
 
         }
@@ -391,43 +394,45 @@ int main(int argc, char **argv)
 }
 
 
-__global__ void MatrixMulKernle_opt(float* C, float* A, float* B, int m, int n, int k){
-	//__shared__ float ds_A[TILE_WIDTH][TILE_WIDTH];
-	//__shared__ float ds_B[TILE_WIDTH][TILE_WIDTH];
+__global__ void matrix_mul_kernel(float* c, float* a, float* b, int ha, int n, int wb )
+{
+	int tx = threadIdx.x;
+	int ty = threadIdx.y;
 
-	int bx = blockIdx.x;		int by = blockIdx.y;
-	int tx = threadIdx.x;		int ty = threadIdx.y;
+	int bx = blockIdx.x;
+	int by = blockIdx.y;
 
-	int Row = by * TILE_WIDTH + ty;
-	int Col = bx * TILE_WIDTH + tx;
+	int astart = blockIdx.y * BLOCK_SIZE * n;
+	int bstart = blockIdx.x * BLOCK_SIZE;
 
-	float Cvalue = 0;
+	int astep = BLOCK_SIZE;  
+	int bstep = BLOCK_SIZE * wb; 
 
-	for (int t = 0; t != (n - 1) / TILE_WIDTH + 1; ++t)
+	float csub = 0;
+
+	__shared__ int A[BLOCK_SIZE][BLOCK_SIZE];
+	__shared__ int B[BLOCK_SIZE][BLOCK_SIZE];
+
+	int nblock = n / BLOCK_SIZE;
+	int k = 0;
+	int i = 0;
+	for (k = 0; k < nblock; ++k)
 	{
-        __shared__ float ds_A[TILE_WIDTH][TILE_WIDTH];
-        __shared__ float ds_B[TILE_WIDTH][TILE_WIDTH];
-        
-		if (Row < m && t * TILE_WIDTH + tx < n)		
-			//ds_A[tx][ty] = A[t*TILE_WIDTH + tx][Row];
-			ds_A[tx][ty] = A[Row * n + t * TILE_WIDTH + tx];
-		else
-			ds_A[tx][ty] = 0.0;
-
-		if (t * TILE_WIDTH + ty < n && Col < k)
-			//ds_B[tx][ty] = B[Col][t*TILE_WIDTH + ty];
-			ds_B[tx][ty] = B[(t * TILE_WIDTH + ty) * k + Col];
-		else
-			ds_B[tx][ty] = 0.0;
-
+		A[ty][tx] = a[astart + k * astep + ty * n + tx];
+		B[ty][tx] = b[bstart + k * bstep + ty * n + tx];
+		//printf("(%d,%d - %d) \n", A[ty][tx], B[ty][tx], k);
 		__syncthreads();
 
-		for (int i = 0; i < TILE_WIDTH; ++i)
-			Cvalue += ds_A[i][ty] * ds_B[tx][i];
-
+		for (i = 0; i < BLOCK_SIZE; ++i)
+		{
+			csub += A[ty][i] * B[i][tx];
+		}
 		__syncthreads();
-
-		if (Row < m && Col < k)
-			C[Row * k + Col] = Cvalue;
 	}
+
+
+	int cstart = by * BLOCK_SIZE * wb + BLOCK_SIZE * bx;
+
+	c[cstart + ty * n + tx] = csub;
+
 }
