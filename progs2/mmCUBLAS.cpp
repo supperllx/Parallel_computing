@@ -101,7 +101,7 @@ matrixMulCPU(float *C, const float *A, const float *B, unsigned int hA, unsigned
 }
 
 //extern cudaError_t cu_multi(float* c_m, float* a_m, float* b_m, int ha,int n, int wb);
-extern __global__ void kernel_multi(float* c_m, float* a_m, float* b_m, int ha, int n, int wb);
+__global__ void kernel_multi(float* c_m, float* a_m, float* b_m, int ha, int n, int wb);
 
 // Allocates a matrix with random float entries.
 void randomInit(float *data, int size)
@@ -385,4 +385,22 @@ int main(int argc, char **argv)
     int matrix_result = matrixMultiply(argc, argv, devID, matrix_size);
 
     return matrix_result;
+}
+
+__global__ void kernel_multi(float* c_m, float* a_m, float* b_m, int ha, int n, int wb) {
+	int tid_x = threadIdx.x;
+	int tid_y = threadIdx.y;
+
+	int t_id = (blockIdx.y*blockDim.y + threadIdx.y)*gridDim.x*blockDim.x + blockIdx.x*blockDim.x + threadIdx.x;
+	int row = blockIdx.y*blockDim.y + threadIdx.y;
+	int column = blockIdx.x*blockDim.x + threadIdx.x;
+
+	float sum = 0;
+	for (int i = 0; i != n; ++i) {
+		//printf("(%f,%f,%d,%d,%d)\n", a_m[tid_y * n + i], b_m[i * n + tid_x],tid_x, tid_y, i);
+		//sum += a_m[tid_y * n + i] * b_m[i * wb + tid_x];
+		sum += a_m[row*n + i] * b_m[i*wb + column];
+	}
+	//c_m[tid_y*wb + tid_x] = sum;
+	c_m[t_id] = sum;
 }
