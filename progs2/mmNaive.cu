@@ -81,6 +81,9 @@ typedef struct _matrixSize      // Optional Command-line multiplier for matrix s
 //! @param hA         height of matrix A
 //! @param wB         width of matrix B
 ////////////////////////////////////////////////////////////////////////////////
+
+__global__ void kernel_multi(float* c_m, float* a_m, float* b_m, int ha, int n, int wb);
+
 void
 matrixMulCPU(float *C, const float *A, const float *B, unsigned int hA, unsigned int wA, unsigned int wB)
 {
