@@ -91,6 +91,7 @@ all: build
 
 build: mmCUBLAS
 build: mmNaive
+build: mmOpt
 
 check.deps:
 ifeq ($(SAMPLE_ENABLED),0)
@@ -114,12 +115,20 @@ mmNaive.o:mmNaive.cu
 mmNaive: mmNaive.o
 	$(EXEC) $(NVCC) $(ALL_LDFLAGS) $(GENCODE_FLAGS) -o $@ $+ $(LIBRARIES)
 
+mmOpt.o:mmOpt.cu
+	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
+
+mmOpt: mmOpt.o
+	$(EXEC) $(NVCC) $(ALL_LDFLAGS) $(GENCODE_FLAGS) -o $@ $+ $(LIBRARIES)
+
 run: build
 	$(EXEC) ./mmCUBLAS
 	$(EXEC) ./mmNaive
+	$(EXEC) ./mmOpt
 
 clean:
 	rm -f mmCUBLAS mmCUBLAS.o
 	rm -f mmNaive mmNaive.o
+	rm -f mmOpt mmOpt.o
 
 clobber: clean
