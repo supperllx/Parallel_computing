@@ -84,8 +84,7 @@ typedef struct _matrixSize      // Optional Command-line multiplier for matrix s
 //! @param wB         width of matrix B
 ////////////////////////////////////////////////////////////////////////////////
 
-__global__ void kernel_multi(float* c_m, float* a_m, float* b_m, int ha, int n, int wb);
-__global__ void MatrixMulKernle(float* C, float* A, float* B, int m, int n, int k);
+__global__ void MatrixMulKernle_opt(float* C, float* A, float* B, int m, int n, int k);
 
 void
 matrixMulCPU(float *C, const float *A, const float *B, unsigned int hA, unsigned int wA, unsigned int wB)
@@ -297,7 +296,7 @@ int matrixMultiply(int argc, char **argv, int devID, sMatrixSize &matrix_size)
             //note cublas is column primary!
             //need to transpose the order
             //checkCudaErrors(cublasSgemm(handle, CUBLAS_OP_N, CUBLAS_OP_N, matrix_size.uiWB, matrix_size.uiHA, matrix_size.uiWA, &alpha, d_B, matrix_size.uiWB, d_A, matrix_size.uiWA, &beta, d_C, matrix_size.uiWB));
-			MatrixMulKernle<<<grid,threads>>>(d_C, d_A, d_B, matrix_size.uiHA, matrix_size.uiWA, matrix_size.uiWB);
+			MatrixMulKernle_opt<<<grid,threads>>>(d_C, d_A, d_B, matrix_size.uiHA, matrix_size.uiWA, matrix_size.uiWB);
 			//cudaDeviceSynchronize();
 
         }
@@ -392,7 +391,7 @@ int main(int argc, char **argv)
 }
 
 
-__global__ void MatrixMulKernle(float* C, float* A, float* B, int m, int n, int k){
+__global__ void MatrixMulKernle_opt(float* C, float* A, float* B, int m, int n, int k){
 	__shared__ float ds_A[TILE_WIDTH][TILE_WIDTH];
 	__shared__ float ds_B[TILE_WIDTH][TILE_WIDTH];
 
