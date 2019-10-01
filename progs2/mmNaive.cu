@@ -401,7 +401,7 @@ __global__ void kernel_multi(float* c_m, float* a_m, float* b_m, int ha, int n, 
 	printf("row:%d, row1:%d, col:%d, col1:%d \n", row, row1, column, column1);
 	float sum = 0;
 	for (int i = 0; i != n; ++i) {
-		//printf("(%f,%f,%d,%d,%d)\n", a_m[tid_y * n + i], b_m[i * n + tid_x],tid_x, tid_y, i);
+		printf("(%f,%f,%d,%d,%d)\n", a_m[tid_y * n + i], b_m[i * n + tid_x],tid_x, tid_y, i);
 		//sum += a_m[tid_y * n + i] * b_m[i * wb + tid_x];
 		sum += a_m[row*n + i] * b_m[i*wb + column];
 	}
