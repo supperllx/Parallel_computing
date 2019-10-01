@@ -283,7 +283,7 @@ int matrixMultiply(int argc, char **argv, int devID, sMatrixSize &matrix_size)
 
         //Perform warmup operation with cublas
         checkCudaErrors(cublasSgemm(handle, CUBLAS_OP_N, CUBLAS_OP_N, matrix_size.uiWB, matrix_size.uiHA, matrix_size.uiWA, &alpha, d_B, matrix_size.uiWB, d_A, matrix_size.uiWA, &beta, d_C, matrix_size.uiWB));
-
+		printf("finsh warmup");
         // Allocate CUDA events that we'll use for timing
         checkCudaErrors(cudaEventCreate(&start));
         checkCudaErrors(cudaEventCreate(&stop));
@@ -296,7 +296,8 @@ int matrixMultiply(int argc, char **argv, int devID, sMatrixSize &matrix_size)
             //note cublas is column primary!
             //need to transpose the order
             //checkCudaErrors(cublasSgemm(handle, CUBLAS_OP_N, CUBLAS_OP_N, matrix_size.uiWB, matrix_size.uiHA, matrix_size.uiWA, &alpha, d_B, matrix_size.uiWB, d_A, matrix_size.uiWA, &beta, d_C, matrix_size.uiWB));
-            kernel_multi<<<grid,threads>>>(d_C, d_A, d_B, matrix_size.uiHA, matrix_size.uiWA, matrix_size.uiWB);
+			kernel_multi<<<grid,threads>>>(d_C, d_A, d_B, matrix_size.uiHA, matrix_size.uiWA, matrix_size.uiWB);
+			//matrixmultiplicationFunc<<<grid,threads>>>(d_C,d_A,d_B,matrix_size.uiHA,matrix_size.uiWA,matrix_size.uiWB);
 
         }
 
