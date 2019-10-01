@@ -392,8 +392,8 @@ int main(int argc, char **argv)
 
 
 __global__ void MatrixMulKernle_opt(float* C, float* A, float* B, int m, int n, int k){
-	__shared__ float ds_A[TILE_WIDTH][TILE_WIDTH];
-	__shared__ float ds_B[TILE_WIDTH][TILE_WIDTH];
+	//__shared__ float ds_A[TILE_WIDTH][TILE_WIDTH];
+	//__shared__ float ds_B[TILE_WIDTH][TILE_WIDTH];
 
 	int bx = blockIdx.x;		int by = blockIdx.y;
 	int tx = threadIdx.x;		int ty = threadIdx.y;
@@ -405,6 +405,9 @@ __global__ void MatrixMulKernle_opt(float* C, float* A, float* B, int m, int n, 
 
 	for (int t = 0; t != (n - 1) / TILE_WIDTH + 1; ++t)
 	{
+        __shared__ float ds_A[TILE_WIDTH][TILE_WIDTH];
+        __shared__ float ds_B[TILE_WIDTH][TILE_WIDTH];
+        
 		if (Row < m && t * TILE_WIDTH + tx < n)		
 			//ds_A[tx][ty] = A[t*TILE_WIDTH + tx][Row];
 			ds_A[tx][ty] = A[Row * n + t * TILE_WIDTH + tx];
