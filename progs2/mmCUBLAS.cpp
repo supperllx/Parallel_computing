@@ -67,6 +67,8 @@
 #define max(a,b) ((a > b) ? a : b)
 #endif
 
+using namespace std;
+
 typedef struct _matrixSize      // Optional Command-line multiplier for matrix sizes
 {
     unsigned int uiWA, uiHA, uiWB, uiHB, uiWC, uiHC;
