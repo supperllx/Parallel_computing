@@ -396,8 +396,8 @@ __global__ void kernel_multi(float* c_m, float* a_m, float* b_m, int ha, int n, 
 
 	int t_id = (blockIdx.y*blockDim.y + threadIdx.y)*gridDim.x*blockDim.x + blockIdx.x*blockDim.x + threadIdx.x;
 	int row = blockIdx.y*blockDim.y + threadIdx.y;
-	int row1 = t_id / wb;
-	int column1 = t_id % wb;
+	//int row1 = t_id / wb;
+	//int column1 = t_id % wb;
 	int column = blockIdx.x*blockDim.x + threadIdx.x;
 	//printf("row:%d, row1:%d, col:%d, col1:%d \n", row, row1, column, column1);
 	float sum = 0;
