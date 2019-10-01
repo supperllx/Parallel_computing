@@ -390,13 +390,15 @@ int main(int argc, char **argv)
 }
 
 __global__ void kernel_multi(float* c_m, float* a_m, float* b_m, int ha, int n, int wb) {
-	int tid_x = threadIdx.x;
-	int tid_y = threadIdx.y;
+	//int tid_x = threadIdx.x;
+	//int tid_y = threadIdx.y;
 
 	int t_id = (blockIdx.y*blockDim.y + threadIdx.y)*gridDim.x*blockDim.x + blockIdx.x*blockDim.x + threadIdx.x;
 	int row = blockIdx.y*blockDim.y + threadIdx.y;
+	int row1 = t_id / wb;
+	int column1 = t_id % wb;
 	int column = blockIdx.x*blockDim.x + threadIdx.x;
-
+	printf("row:%d, row1:%d, col:%d, col1:%d \n", row, row1, column, column1);
 	float sum = 0;
 	for (int i = 0; i != n; ++i) {
 		//printf("(%f,%f,%d,%d,%d)\n", a_m[tid_y * n + i], b_m[i * n + tid_x],tid_x, tid_y, i);
