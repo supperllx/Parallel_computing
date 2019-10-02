@@ -268,7 +268,7 @@ int matrixMultiply(int argc, char **argv, int devID, sMatrixSize &matrix_size)
 
     dim3 threads(BLOCK_SIZE, BLOCK_SIZE);
 	dim3 grid(matrix_size.uiWB / BLOCK_SIZE, matrix_size.uiHA / BLOCK_SIZE);
-
+    printf("ha: %d, wa: %d, wb: %d", matrix_size.uiHA, matrix_size.uiWA, matrix_size.uiWB);
     // create and start timer
     printf("Computing result using mmOpt...");
 
@@ -420,7 +420,7 @@ __global__ void matrix_mul_kernel(float* c, float* a, float* b, int ha, int n, i
 	{
 		A[ty][tx] = a[astart + k * astep + ty * n + tx];
 		B[ty][tx] = b[bstart + k * bstep + ty * wb + tx];
-		//printf("(%d,%d - %d) \n", A[ty][tx], B[ty][tx], k);
+		//printf("(%d,%d - %d -start: %d, astep: %d, ty: %d) \n", A[ty][tx], B[ty][tx], k, (astart + k * astep + ty * n + tx));
 		__syncthreads();
 
 		for (i = 0; i < BLOCK_SIZE; ++i)
