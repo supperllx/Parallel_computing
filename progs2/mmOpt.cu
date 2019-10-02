@@ -418,8 +418,8 @@ __global__ void matrix_mul_kernel(float* c, float* a, float* b, int ha, int n, i
 	int i = 0;
 	for (k = 0; k < nblock; ++k)
 	{
-		A[ty][tx] = a[astart + k * astep + ty * n + tx];
-		B[ty][tx] = b[bstart + k * bstep + ty * wb + tx];
+		A[ty][tx] = a[astart + k * astep ];
+		B[ty][tx] = b[bstart + k * bstep ];
 		//printf("(%d,%d - %d -start: %d, astep: %d, ty: %d) \n", A[ty][tx], B[ty][tx], k, (astart + k * astep + ty * n + tx));
 		__syncthreads();
 
