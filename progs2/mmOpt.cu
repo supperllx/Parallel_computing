@@ -410,8 +410,8 @@ __global__ void matrix_mul_kernel(float* c, float* a, float* b, int ha, int n, i
 
 	float csub = 0;
 
-	__shared__ int A[BLOCK_SIZE][BLOCK_SIZE];
-	__shared__ int B[BLOCK_SIZE][BLOCK_SIZE];
+	__shared__ float A[BLOCK_SIZE][BLOCK_SIZE];
+	__shared__ float B[BLOCK_SIZE][BLOCK_SIZE];
 
 	int nblock = n / BLOCK_SIZE;
 	int k = 0;
