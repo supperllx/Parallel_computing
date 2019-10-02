@@ -263,11 +263,11 @@ int matrixMultiply(int argc, char **argv, int devID, sMatrixSize &matrix_size)
     checkCudaErrors(cudaMalloc((void **) &d_C, mem_size_C));
 
     // setup execution parameters
-    //dim3 threads(block_size, block_size);
-    //dim3 grid(matrix_size.uiWC / threads.x, matrix_size.uiHC / threads.y);
+    dim3 threads(block_size, block_size);
+    dim3 grid(matrix_size.uiWC / threads.x, matrix_size.uiHC / threads.y);
 
-    dim3 threads(BLOCK_SIZE, BLOCK_SIZE);
-	dim3 grid(matrix_size.uiWB / BLOCK_SIZE, matrix_size.uiHA / BLOCK_SIZE);
+    //dim3 threads(BLOCK_SIZE, BLOCK_SIZE);
+	//dim3 grid(matrix_size.uiWB / BLOCK_SIZE, matrix_size.uiHA / BLOCK_SIZE);
     printf("ha: %d, wa: %d, wb: %d", matrix_size.uiHA, matrix_size.uiWA, matrix_size.uiWB);
     // create and start timer
     printf("Computing result using mmOpt...");
