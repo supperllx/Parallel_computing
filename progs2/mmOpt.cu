@@ -420,7 +420,7 @@ __global__ void matrix_mul_kernel(float* c, float* a, float* b, int ha, int n, i
 	{
 		A[ty][tx] = a[astart + k * astep + ty * n + tx];
 		B[ty][tx] = b[bstart + k * bstep + ty * wb + tx];
-		printf("(%d,%d - %d) \n", A[ty][tx], B[ty][tx], k);
+		//printf("(%d,%d - %d) \n", A[ty][tx], B[ty][tx], k);
 		__syncthreads();
 
 		for (i = 0; i < BLOCK_SIZE; ++i)
