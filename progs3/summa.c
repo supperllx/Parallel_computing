@@ -73,7 +73,7 @@ void init_test(double **lA, double **lB, double **lC, int blck_sz, int coordinat
 *	Initialize arrays A and B with random numbers, and array C with zeros. 
 *	Each array is setup as a square block of blck_sz.
 **/
-void initialize(double **lA, double **lB, double **lC, int blck_sz){
+void init_real(double **lA, double **lB, double **lC, int blck_sz){
 	int i, j;
 	double value;
 	// Set random values...technically it is already random and this is redundant
@@ -202,8 +202,8 @@ int main(int argc, char *argv[]) {
 	C = alloc_2d_double(block_sz, block_sz);
 
 	//Call this function to create Bi/tridigonal for testing
-	init_test(A, B, C, block_sz, coordinates);
-	//initialize(A, B, C, block_sz);
+	//init_test(A, B, C, block_sz, coordinates);
+	init_real(A, B, C, block_sz);
 
 	// Use MPI_Wtime to get the starting time
 	start_time = MPI_Wtime();
