@@ -222,6 +222,7 @@ int main(int argc, char *argv[]) {
 	printf("Computation Time: %f ms. \n", total_time);
 
 	//Insert statements for testing
+	/*
 	int ii,jj,i,j;
 	for(ii = 0; ii < block_sz; ii++) {
 		for(jj = 0; jj < block_sz; jj++) {
@@ -247,7 +248,7 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	printf("Test pass\n");
-
+	*/
 
 	if (p_rank == 0){
 		// Print in pseudo csv format for easier results compilation
