@@ -246,7 +246,7 @@ int main(int argc, char *argv[]) {
 			}	
 		}
 	}
-	printf("Matrix Comparation Testing Finished....\n");
+	printf("Test pass\n");
 
 
 	if (p_rank == 0){
